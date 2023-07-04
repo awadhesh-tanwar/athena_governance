@@ -1,0 +1,12 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "0.0.0.0:18623:8000"
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
+    volumes:
+      - ./app:/code
