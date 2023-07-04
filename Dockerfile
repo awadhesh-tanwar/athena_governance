@@ -1,12 +1,14 @@
 FROM python:3.9
 
-WORKDIR /code
+RUN mkdir -p /governance_lf/
 
-# Install dependencies
-COPY app/requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+WORKDIR /governance_lf/
+
+COPY app .
+
+RUN pip install -r requirements.txt
 
 EXPOSE 18623
 
-# CMD tail -f /dev/null
-CMD python manage.py runserver 0.0.0.0:8000
+WORKDIR /governance_lf
+#CMD tail -f /dev/null

@@ -3,10 +3,14 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile
+    restart: unless-stopped
     ports:
-      - "0.0.0.0:18623:8000"
+      - "18623:8000"
     extra_hosts:
     - "host.docker.internal:host-gateway"
-    volumes:
-      - ./app:/code
+    entrypoint: ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "1G"
+        max-file: "5"

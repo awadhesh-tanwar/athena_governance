@@ -27,18 +27,23 @@ def get_users(request):
         user_names, role_names = list_principals()
         return JsonResponse({'users': user_names, 'roles': role_names})
     except Exception as e:
-        return JsonResponse({'message': 'Failed to fetch users'}, status=400)
+        return JsonResponse({'message': e}, status=400)
 
 
 def get_dbs(request):
-    # client = boto3.client('glue')
-    response = glue_client.get_databases()
-    databases = response['DatabaseList']
-    return JsonResponse({'dbs': databases})
+    try:
+        response = glue_client.get_databases()
+        databases = response['DatabaseList']
+        return JsonResponse({'dbs': databases})
+    except Exception as e:
+        return JsonResponse({'message': e}, status=400)
 
 
 def get_tables(request):
-    db_name = request.GET.get('db_name')
-    json_data = glue_client.get_tables(DatabaseName=db_name)
-    tables = [table['Name'] for table in json_data['TableList']]
-    return JsonResponse({'tables': tables})
+    try:
+        db_name = request.GET.get('db_name')
+        json_data = glue_client.get_tables(DatabaseName=db_name)
+        tables = [table['Name'] for table in json_data['TableList']]
+        return JsonResponse({'tables': tables})
+    except Exception as e:
+        return JsonResponse({'message': e}, status=400)

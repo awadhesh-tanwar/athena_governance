@@ -41,7 +41,7 @@ def grant_permission(request):
         response = grant_lake_formation_table_permissions(db_name, table_name, principal_arn, permissions)
         return JsonResponse({'tables': response})
     except Exception as e:
-        return JsonResponse({'message': response}, status=400)
+        return JsonResponse({'message': e}, status=400)
 
 
 def revoke_lake_formation_table_permissions(database_name, table_name, principal_arn, permissions):
@@ -74,4 +74,4 @@ def revoke_permission(request):
         response = revoke_lake_formation_table_permissions(db_name, table_name, principal_arn, permissions)
         return JsonResponse({'tables': response})
     except Exception as e:
-        return JsonResponse({'message': response}, status=400)
+        return JsonResponse({'message': e}, status=400)

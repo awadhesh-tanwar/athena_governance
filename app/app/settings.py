@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-i&@&fy36p(v=f7q(j+n%_qq47_wh4@db@ew%hq5av&xf^d#bzq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 import environ
 
