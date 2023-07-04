@@ -1,3 +1,4 @@
 app/app/.env
 .idea
 **/__pycache__/
+*.pyc*

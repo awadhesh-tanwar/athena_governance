@@ -8,7 +8,8 @@ services:
       - "18623:8000"
     extra_hosts:
     - "host.docker.internal:host-gateway"
-    entrypoint: ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi"]
+#    entrypoint: ["gunicorn", "--bind", "0.0.0.0:8000", "app.wsgi"]
+    entrypoint: ["/bin/sh","/governance_lf/run.sh"]
     logging:
       driver: "json-file"
       options:
