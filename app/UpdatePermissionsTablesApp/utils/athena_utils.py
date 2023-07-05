@@ -1,9 +1,10 @@
 import pyathena
 import awswrangler
 
-from app.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION_NAME
+from app.settings import AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION_NAME, AWS_S3_BUCKET
 from griffin import SecretManagementUtil
 import logging
+
 
 secret_management = SecretManagementUtil()
 logging.basicConfig(filename='athena_utils.log',level=logging.DEBUG)
@@ -11,23 +12,23 @@ logging.basicConfig(filename='athena_utils.log',level=logging.DEBUG)
 conn = pyathena.connect(region_name=AWS_REGION_NAME,
                         aws_access_key_id=AWS_ACCESS_KEY_ID,
                         aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-                        s3_staging_dir='s3://ds-lake-prod-test-s3/awd/staging/')
+                        s3_staging_dir=AWS_S3_BUCKET + '/awd/staging/')
 
 
 def write_db_permisssions_table_to_s3(df):
-    awswrangler.s3.to_parquet(df=df, path="s3://ds-lake-prod-test-s3/awd/default/db_permissions/db_permissions.parquet",
+    awswrangler.s3.to_parquet(df=df, path=AWS_S3_BUCKET + "/awd/default/db_permissions/db_permissions.parquet",
                               index=False)
 
 
 def write_table_permissions_table_to_s3(df):
     awswrangler.s3.to_parquet(df=df,
-                              path="s3://ds-lake-prod-test-s3/awd/default/table_permissions/table_permissions.parquet",
+                              path=AWS_S3_BUCKET + "/awd/default/table_permissions/table_permissions.parquet",
                               index=False)
 
 
 def write_lftags_db_permissions_table_to_s3(df):
     awswrangler.s3.to_parquet(df=df,
-                              path="s3://ds-lake-prod-test-s3/awd/default/lftags_db_permissions/lftags_db_permissions"
+                              path=AWS_S3_BUCKET + "/awd/default/lftags_db_permissions/lftags_db_permissions"
                                    ".parquet",
                               index=False)
 
@@ -51,14 +52,14 @@ def dump_db_permissions_table_into_athena(df):
     OUTPUTFORMAT
       'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-      's3://ds-lake-prod-test-s3/awd/default/db_permissions/'
+      '{}'
     TBLPROPERTIES (
       'classification'='parquet')
-    '''
+    '''.format(AWS_S3_BUCKET + "/awd/default/db_permissions/")
 
     try:
         write_db_permisssions_table_to_s3(df)
-        cursor = pyathena.connect(s3_staging_dir="s3://ds-lake-prod-test-s3/awd/staging/", region_name=AWS_REGION_NAME,
+        cursor = pyathena.connect(s3_staging_dir=AWS_S3_BUCKET + "/awd/staging/", region_name=AWS_REGION_NAME,
                                   schema_name='default').cursor()
         cursor.execute(query_create_db_permissions_table)
         cursor.execute('SELECT * FROM default.db_permissions limit 10;')
@@ -93,14 +94,14 @@ def dump_table_permissions_table_into_athena(df):
     OUTPUTFORMAT
         'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-        's3://ds-lake-prod-test-s3/awd/default/table_permissions/'
+        '{}'
     TBLPROPERTIES (
         'classification'='parquet')
-    '''
+    '''.format(AWS_S3_BUCKET + "/awd/default/table_permissions/")
 
     try:
         write_table_permissions_table_to_s3(df)
-        cursor = pyathena.connect(s3_staging_dir="s3://ds-lake-prod-test-s3/awd/staging/table_permissions/",
+        cursor = pyathena.connect(s3_staging_dir=AWS_S3_BUCKET + "/awd/staging/table_permissions/",
                                   region_name=AWS_REGION_NAME, schema_name='default').cursor()
         cursor.execute(query_create_table_permissions_table)
     except Exception as e:
@@ -131,14 +132,14 @@ def dump_lftags_db_table_into_athena(df):
     OUTPUTFORMAT
         'org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat'
     LOCATION
-        's3://ds-lake-prod-test-s3/awd/default/lftags_db_permissions/'
+        '{}'
     TBLPROPERTIES (
         'classification'='parquet')
-    '''
+    '''.format(AWS_S3_BUCKET + "/awd/default/lftags_db_permissions/")
 
     try:
         write_lftags_db_permissions_table_to_s3(df)
-        cursor = pyathena.connect(s3_staging_dir="s3://ds-lake-prod-test-s3/awd/staging/lftags_db_permissions/",
+        cursor = pyathena.connect(s3_staging_dir=AWS_S3_BUCKET + "/awd/staging/lftags_db_permissions/",
                                   region_name=AWS_REGION_NAME, schema_name='default').cursor()
         cursor.execute(query_create_lftags_db_permissions_table)
     except Exception as e:

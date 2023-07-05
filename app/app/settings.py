@@ -45,6 +45,7 @@ AWS_ACCESS_KEY_ID = secret_management.get_secret_value('lf-utils-user-access-key
 AWS_SECRET_ACCESS_KEY = secret_management.get_secret_value('lf-utils-user-secret-key')  # env('AWS_SECRET_ACCESS_KEY')
 AWS_REGION_NAME = 'ap-south-1'# secret_management.get_secret_value('')  # env('AWS_REGION_NAME')
 AWS_CATALOG_ID = '593537320251'
+AWS_S3_BUCKET = 's3://ds-lake-prod-test-s3'
 # Application definition
 
 INSTALLED_APPS = [
