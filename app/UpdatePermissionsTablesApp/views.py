@@ -11,9 +11,17 @@ from pandas import json_normalize
 from typing import Tuple, List, Dict
 import pandas as pd
 import requests
+import logging
 
 from app.settings import AWS_REGION_NAME
-from .utils.athena_utils import dump_table_permissions_table_into_athena, dump_db_permissions_table_into_athena
+from .utils.athena_utils import dump_table_permissions_table_into_athena, dump_db_permissions_table_into_athena, \
+    dump_lftags_db_table_into_athena
+from griffin import SecretManagementUtil
+
+secret_management = SecretManagementUtil()
+logging.basicConfig(filename='update_permissions.log',level=logging.DEBUG)
+
+
 # Retrieves the list of permissions for given resource type
 region = AWS_REGION_NAME
 lf_client = Session(region_name=region).client("lakeformation")
@@ -59,9 +67,9 @@ def download_db_permissions(catalog_id: str, resource_type: str):
     return final_df
 
 
-region = 'ap-south-1'
-catalog_id = '712268157070'
-s3bucket = 'ds-lake-sbox-test-s3'
+region = AWS_REGION_NAME
+catalog_id = AWS_CATALOG_ID
+s3bucket = 'ds-lake-prod-test-s3'
 databasename = 'default'
 createtable = 'yes'
 
